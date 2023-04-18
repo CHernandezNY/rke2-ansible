@@ -10,3 +10,8 @@
   roles:
     - role: balancer
 
+- hosts: k8s_cluster
+  become: yes
+  roles:
+    - role: download
+      rke2_chksum: "{{ lookup('url', 'https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/sha256sum-amd64.txt') }}"
