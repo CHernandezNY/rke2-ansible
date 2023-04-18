@@ -3,3 +3,14 @@
   ansible.builtin.file:
     path: /usr/local/bin/rke2
     state: absent
+
+- name: Remove RKE2 tarball file 
+  ansible.builtin.file:
+    path: /var/lib/rancher/rke2/agent/images/rke2-images-core.linux-amd64.tar.gz
+    state: absent
+
+- name: Remove RKE2 Images directory 
+  ansible.builtin.file:
+    path: /var/lib/rancher/rke2/agent/images/
+    state: directory
+    state: absent

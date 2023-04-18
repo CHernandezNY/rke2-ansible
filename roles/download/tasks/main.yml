@@ -1,44 +1,31 @@
 ---
 - name: Set checksum
   set_fact:
-    chksum_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-amd64.tar.gz$') | join}}" 
-  ### Place holder for possible future ARM support in RKE2
-  #  chksum_arm: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-arm.tar.gz$') | join}}" 
-  #  chksum_arm64: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-arm64.tar.gz$') | join}}" 
+    chksum_tar_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-amd64.tar.gz$') | join}}" 
+    chksum_bin_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2.linux-amd64$') | join}}"
+ 
+- name: Create rke2 images directory if it does not exist
+  ansible.builtin.file:
+    path: /var/lib/rancher/rke2/agent/images/
+    state: directory
+    mode: '0755'
 
-- name: Download rke2 binary x64
+- name: Download rke2 tarball x86_64
   get_url:
     url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2-images-core.linux-amd64.tar.gz
-    checksum: sha256:{{ chksum_x86.split()[0] }}
-    dest: /usr/local/bin/rke2
+    checksum: sha256:{{ chksum_tar_x86.split()[0] }}
+    dest: /var/lib/rancher/rke2/agent/images/rke2-images-core.linux-amd64.tar.gz
     owner: root
     group: root
     mode: 0755
   when: ansible_facts.architecture == "x86_64"
 
-### Place holder for possible future ARM support in RKE2
-#- name: Download rke2 binary arm64  
-#  get_url:
-#    url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2-images-core.linux-arm64.tar.gz 
-#    checksum: sha256:{{ chksum_arm.split()[0] }}
-#    dest: /usr/local/bin/rke2
-#    owner: root
-#    group: root
-#    mode: 0755
-#  when:
-#    - ( ansible_facts.architecture is search("arm") and
-#        ansible_facts.userspace_bits == "64" ) or
-#      ansible_facts.architecture is search("aarch64")
-
-### Place holder for possible future ARM support in RKE2
-#- name: Download rke2 binary armhf
-#  get_url:
-#    url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2-images-core.linux-arm.tar.gz
-#    checksum: sha256:{{ chksum_arm64.split()[0] }}
-#    dest: /usr/local/bin/rke2
-#    owner: root
-#    group: root
-#    mode: 0755
-#  when:
-#    - ansible_facts.architecture is search("arm")
-#    - ansible_facts.userspace_bits == "32"
+- name: Download rke2 binary x86_64
+  get_url:
+    url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2.linux-amd64
+    checksum: sha256:{{ chksum_bin_x86.split()[0] }}
+    dest: /usr/local/bin/rke2
+    owner: root
+    group: root
+    mode: 0755
+  when: ansible_facts.architecture == "x86_64"
