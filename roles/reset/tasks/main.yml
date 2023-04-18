@@ -1,0 +1,5 @@
+---
+- name: Remove RKE2 binary file 
+  ansible.builtin.file:
+    path: /usr/local/bin/rke2
+    state: absent
