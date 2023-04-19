@@ -8,19 +8,22 @@ systemd_dir: /etc/systemd/system
 # Set your timezone
 system_timezone: "Your/Timezone"
 
+# Set CNI plugin choice none, canal, cilium or calico
+cni_plugin: "canal"
+
 # interface which will be used for flannel
 cni_iface: "eth0"
 
 # apiserver_endpoint is virtual ip-address of the load balancer
 apiserver_endpoint: "192.168.1.17"
 
-# rke_token is required  masters can talk together securely
+# rke2_token is required so controllers can talk together securely
 # this token should be alpha numeric only
-rke_token: "some-SUPER-DEDEUPER-secret-password"
+rke2_token: "some-SUPER-DEDEUPER-secret-password"
 
 # change these to your liking, the only required one is--no-deploy servicelb
-extra_server_args: "--tls-san={{ apiserver_endpoint }} --flannel-iface={{ cni_iface }} --node-taint CriticalAddonsOnly=true:NoExecute --disable servicelb --disable traefik"
-extra_agent_args: "--flannel-iface={{ cni_iface }}"
+extra_server_args: "--tls-san={{ apiserver_endpoint }} --node-taint CriticalAddonsOnly=true:NoExecute --cni {{cni_plugin}} --disable rke2-ingress-nginx"
+extra_agent_args: " "
 
 # metallb install flag
 metallb_deploy: true

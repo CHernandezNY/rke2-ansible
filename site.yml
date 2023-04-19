@@ -15,3 +15,8 @@
   roles:
     - role: download
       rke2_chksum: "{{ lookup('url', 'https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/sha256sum-amd64.txt') }}"
+
+- hosts: controller
+  become: yes
+  roles:
+    - role: rke2/controller

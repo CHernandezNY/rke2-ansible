@@ -2,7 +2,7 @@
 - name: Disable swap
   become: yes
   shell: >
-    sudo swapoff -v /swap.img
+    sudo swapoff -a
     sudo rm /swap.img
   when: ansible_swaptotal_mb > 0
 
