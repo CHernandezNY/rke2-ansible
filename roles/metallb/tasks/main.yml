@@ -14,7 +14,7 @@
       mode: 0664
   
   - name: Install metallb
-    k8s:
+    kubernetes.core.k8s:
       kubeconfig: "/home/{{ ansible_user }}/.kube/config" 
       state: present              
       src: ~/metallb.yml

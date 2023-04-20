@@ -38,7 +38,6 @@
   get_url:
     url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2.linux-amd64.tar.gz
     checksum: sha256:{{ chksum_bin_x86.split()[0] }}
-    decompress: true
     dest: /var/lib/rancher/rke2/agent/images/
     owner: root
     group: root

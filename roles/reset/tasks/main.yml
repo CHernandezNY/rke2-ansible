@@ -7,6 +7,7 @@
   failed_when: false
   with_items:
     - rke2
+    - rke2-agent
 
 - name: Remove RKE2 binary file 
   ansible.builtin.file:
