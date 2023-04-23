@@ -10,4 +10,15 @@ stream {
         listen 443;
         proxy_pass kubernetes;
     }
+
+    upstream rke_agent {
+      {% for host in groups['controller'] %}
+        server {{ host }}:9345;
+      {% endfor %}
+    }
+
+    server {
+        listen 9345;
+        proxy_pass rke_agent;
+    }
 }
