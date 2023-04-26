@@ -8,7 +8,7 @@ systemd_dir: /etc/systemd/system
 # Set your timezone
 system_timezone: "Your/Timezone"
 
-# Set CNI native plugin choice canal, cilium or calico
+# Set CNI native plugin choice none, canal, cilium or calico
 cni_native: "canal"
 
 # Set CNI external plugin choice none, flannel, canal, or calico
