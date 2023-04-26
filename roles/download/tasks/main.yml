@@ -2,7 +2,7 @@
 - name: Set checksum
   set_fact:
     chksum_tar_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-amd64.tar.gz$') | join}}" 
-    chksum_cni_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-{{ cni_plugin }}.linux-amd64.tar.gz$') | join}}"
+    chksum_cni_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-{{ cni_native }}.linux-amd64.tar.gz$') | join}}"
     chksum_bin_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2.linux-amd64.tar.gz$') | join}}"
  
 - name: Create rke2 images directory if it does not exist
@@ -23,7 +23,7 @@
 
 - name: Download rke2 cni tarball x86_64
   get_url:
-    url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2-images-{{ cni_plugin }}.linux-amd64.tar.gz
+    url: https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/rke2-images-{{ cni_native }}.linux-amd64.tar.gz
     #checksum: sha256:{{ chksum_cni_x86.split()[0] }}
     dest: /var/lib/rancher/rke2/agent/images/
     owner: root
@@ -31,7 +31,7 @@
     mode: 0755
   when: 
     - ( ansible_facts.architecture == "x86_64" and 
-        cni_plugin != "none")
+        cni_native != "none")
 
 
 - name: Download rke2 binary x86_64

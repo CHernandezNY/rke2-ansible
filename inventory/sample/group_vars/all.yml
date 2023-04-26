@@ -8,11 +8,18 @@ systemd_dir: /etc/systemd/system
 # Set your timezone
 system_timezone: "Your/Timezone"
 
-# Set CNI plugin choice none, canal, cilium or calico
-cni_plugin: "canal"
+# Set CNI native plugin choice canal, cilium or calico
+cni_native: "canal"
+
+# Set CNI external plugin choice none, flannel, canal, or calico
+cni_plugin: "none"
 
 # interface which will be used for flannel
 cni_iface: "eth0"
+
+# POD Subnet
+# check cni documentation for the appropriate cidr
+podsubnet: "10.244.0.0/16"
 
 # apiserver_endpoint is virtual ip-address of the load balancer
 apiserver_endpoint: "192.168.1.17"
@@ -22,7 +29,7 @@ apiserver_endpoint: "192.168.1.17"
 rke2_token: "some-SUPER-DEDEUPER-secret-password"
 
 # change these to your liking, the only required one is--no-deploy servicelb
-extra_server_args: "--tls-san={{ apiserver_endpoint }} --node-taint CriticalAddonsOnly=true:NoExecute --cni {{cni_plugin}} --disable rke2-ingress-nginx"
+extra_server_args: "--tls-san={{ apiserver_endpoint }} --node-taint CriticalAddonsOnly=true:NoExecute --cni {{cni_native}} --cluster-cidr {{podsubnet}} --disable rke2-ingress-nginx"
 extra_agent_args: " "
 
 # metallb install flag
@@ -80,3 +87,12 @@ mac_address_mapping:
   "00:01:ff:78:78:d5":
     name: nginx-lb.example.local
     ip: "192.168.1.17"
+
+# CNI Manifest URLs
+# Calico Manifest url 
+calico_url: "https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml"
+calico_crd: "https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml"
+# Flannel Manifest URL
+flannel_url: "https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml"
+# Canal Manifest URL 
+canal_url: "https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/canal.yaml"
