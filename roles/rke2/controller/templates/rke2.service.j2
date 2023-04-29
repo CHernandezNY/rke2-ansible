@@ -21,7 +21,7 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/rke2 server {{ extra_server_args | default("") }}
+ExecStart=/usr/local/bin/rke2 server {{ server_init_args }}
 
 [Install]
 WantedBy=multi-user.target
