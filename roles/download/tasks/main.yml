@@ -4,7 +4,7 @@
     chksum_tar_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-core.linux-amd64.tar.gz$') | join}}" 
     chksum_cni_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2-images-{{ cni_native }}.linux-amd64.tar.gz$') | join}}"
     chksum_bin_x86: "{{ rke2_chksum.split(',') | select('match', '.*  rke2.linux-amd64.tar.gz$') | join}}"
- 
+
 - name: Create rke2 images directory if it does not exist
   ansible.builtin.file:
     path: /var/lib/rancher/rke2/agent/images/
@@ -32,7 +32,6 @@
   when: 
     - ( ansible_facts.architecture == "x86_64" and 
         cni_native != "none")
-
 
 - name: Download rke2 binary x86_64
   get_url:

@@ -28,8 +28,8 @@ apiserver_endpoint: "192.168.1.17"
 # this token should be alpha numeric only
 rke2_token: "some-SUPER-DEDEUPER-secret-password"
 
-# change these to your liking, the only required one is--no-deploy servicelb
-extra_server_args: "--tls-san={{ apiserver_endpoint }} --node-taint CriticalAddonsOnly=true:NoExecute --cni {{cni_native}} --cluster-cidr {{podsubnet}} --disable rke2-ingress-nginx"
+# RKE2 initialization options, add or change these to your liking. 
+extra_server_args: "--node-taint CriticalAddonsOnly=true:NoExecute --disable rke2-ingress-nginx"
 extra_agent_args: " "
 
 # metallb install flag

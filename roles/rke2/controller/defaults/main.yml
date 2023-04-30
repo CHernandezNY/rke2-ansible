@@ -1,12 +1,12 @@
 ---
 ansible_user: root
 server_init_args: >-
+  --tls-san {{ apiserver_endpoint }} --cni {{cni_native}} --cluster-cidr {{podsubnet}}
   {% if groups['controller'] | length > 1 %} 
-    {% if ansible_hostname == hostvars[groups['controller'][0]]['ansible_hostname'] %} 
-
-    {% else %} 
-      --server https://{{ apiserver_endpoint }}:9345 
-    {% endif %} 
-    --token {{ rke2_token }} 
+  {% if ansible_hostname == hostvars[groups['controller'][0]]['ansible_hostname'] %} 
+  {% else %} 
+  --server https://{{ apiserver_endpoint }}:9345 
+  {% endif %} 
+  --token {{ rke2_token }} 
   {% endif %} 
   {{ extra_server_args | default('') }}

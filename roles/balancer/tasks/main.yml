@@ -1,8 +1,9 @@
 - name: Install NGINX on controlplane load balancer
   apt:
-     name: nginx
-     state: present
-     update_cache: true
+    name: nginx
+    state: present
+    update_cache: true
+    
 - name: Check if NGINX tcpconf.d directory exists.
   stat:
     path: /etc/nginx/tcpconf.d/
