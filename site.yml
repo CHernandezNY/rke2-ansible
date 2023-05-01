@@ -18,6 +18,9 @@
 
 - hosts: controller
   become: yes
+  serial: 
+    - 1
+    - 2
   roles:
     - role: rke2/controller
 
