@@ -1,23 +1,23 @@
 ---
 - hosts: all
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
   roles:
     - role: prereq
 
 - hosts: balancer
-  become: yes
+  become: true
   roles:
     - role: balancer
 
 - hosts: k8s_cluster
-  become: yes
+  become: true
   roles:
     - role: download
       rke2_chksum: "{{ lookup('url', 'https://github.com/rancher/rke2/releases/download/{{ rke2_version }}/sha256sum-amd64.txt') }}"
 
 - hosts: controller
-  become: yes
+  become: true
   serial: 
     - 1
     - 2
@@ -33,6 +33,6 @@
             cni_plugin != "none")
 
 - hosts: worker
-  become: yes
+  become: true
   roles:
     - role: rke2/worker

@@ -1,25 +1,53 @@
 ---
-- name: Add an apt signing key for Kubernetes
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+- name: Debian Based OS - Install Kube Control 
+  block: 
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+  
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
 
-- name: Adding apt repository for Kubernetes
-  apt_repository:
-    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-    state: present
-    filename: kubernetes.list
+  - name: Install Kubectl
+    apt:
+      name: "kubectl"
+      state: present
+      update_cache: true
+      allow_downgrade: yes
+    register: apt_result
+    until: apt_result is success
+    retries: 10
+    delay: 15
+  when: ansible_os_family == "Debian"
 
-- name: Install Kubectl
-  apt:
-    name: "kubectl"
-    state: present
-    update_cache: true
-    allow_downgrade: yes
-  register: apt_result
-  until: apt_result is success
-  retries: 10
-  delay: 15
+- name: RedHat Based OS - Install Kube Control
+  block:
+  - name: Add Kubernetes repository
+    ansible.builtin.yum_repository:
+      name: kubernetes
+      description: Kubernnetes
+      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      enabled: true
+      gpgcheck: true
+      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg 
+      exclude: kubelet kubeadm kubectl
+
+  - name: Install Kubectl
+    yum:
+      name: "kubectl"
+      state: present
+      update_cache: true
+      allow_downgrade: yes
+      disable_excludes: kubernetes
+    register: apt_result
+    until: apt_result is success
+    retries: 10
+    delay: 15
+  when: ansible_os_family == "RedHat"
 
 - name: Create manifests directory on first controller
   file:
@@ -39,7 +67,7 @@
     group: root
     mode: 0644
 
-- name: Enable and check rke2 service
+- name: Enable and wait for rke2 service (may take 10 min per controller)
   systemd:
     name: rke2
     daemon_reload: yes

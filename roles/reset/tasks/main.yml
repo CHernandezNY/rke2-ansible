@@ -61,7 +61,7 @@
     daemon_reload: yes
 
 - name: Remove kubectl 
-  apt:
+  package:
     name: "{{ packages }}"
     state: absent
   vars:
