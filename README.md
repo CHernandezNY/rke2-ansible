@@ -5,7 +5,7 @@
 Build a Kubernetes cluster using Ansible with rke2. The goal is easily install a Kubernetes cluster on machines running:
 
 - [X] Ubuntu
-- [ ] CentOS
+- [X] CentOS 8
 
 on processor architecture:
 
