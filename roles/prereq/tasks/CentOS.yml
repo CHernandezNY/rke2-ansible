@@ -1,7 +1,4 @@
-- name:  HELLO WORLD
-  debug:
-    msg: "Hello World"
-
+---
 - name: Disable swap
   become: true
   shell: |
@@ -35,6 +32,12 @@
       - kubernetes
       - pyyaml
       - openshift
+
+- name: Disable Firewall for lab
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+    enabled: false
 
 #- name: Confiure Firewall Rules
 #  firewalld:
