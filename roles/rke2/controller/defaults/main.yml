@@ -1,7 +1,7 @@
 ---
 ansible_user: root
 server_init_args: >-
-  --tls-san {{ apiserver_endpoint }} --cni {{cni_native}} --cluster-cidr {{podsubnet}} --node-external-ip {{ ansible_facts[cni_iface]['ipv4']['address'] }}
+  --tls-san {{ apiserver_endpoint }} --cni {{cni_native}} --cluster-cidr {{podsubnet}} --node-ip {{ ansible_facts[cni_iface]['ipv4']['address'] }}
   {% if groups['controller'] | length > 1 %} 
   {% if ansible_hostname == hostvars[groups['controller'][0]]['ansible_hostname'] %} 
   {% else %} 
