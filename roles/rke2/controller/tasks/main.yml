@@ -3,12 +3,12 @@
   block: 
   - name: Add an apt signing key for Kubernetes
     apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      url: "https://pkgs.k8s.io/core:/stable:/v{{ k8s_version_split[0] }}.{{ k8s_version_split[1] }}/deb/Release.key"
       state: present
   
   - name: Adding apt repository for Kubernetes
     apt_repository:
-      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      repo: "deb https://pkgs.k8s.io/core:/stable:/v{{ k8s_version_split[0] }}.{{ k8s_version_split[1] }}/deb/ /"
       state: present
       filename: kubernetes.list
 

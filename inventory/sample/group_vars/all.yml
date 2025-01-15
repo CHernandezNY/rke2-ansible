@@ -1,5 +1,8 @@
 ---
-rke2_version: v1.26.3+rke2r1
+rke2_version: v1.31.1+rke2r1
+
+#Used for installing kubectl
+k8s_version: 1.29.12
 
 # this is the user that has ssh access to these machines
 ansible_user: ansibleuser

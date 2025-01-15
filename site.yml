@@ -23,6 +23,8 @@
     - 2
   roles:
     - role: rke2/controller
+      vars:
+        k8s_version_split: "{{k8s_version.split('.')}}" 
 
 - hosts: controller
   become: true
@@ -30,7 +32,7 @@
     - role: rke2/cni
       when: 
         - ( cni_native == "none" and 
-            cni_plugin != "none")
+            cni_plugin != "none")      
 
 - hosts: worker
   become: true
