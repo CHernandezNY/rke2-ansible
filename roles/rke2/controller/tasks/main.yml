@@ -30,10 +30,10 @@
     ansible.builtin.yum_repository:
       name: kubernetes
       description: Kubernnetes
-      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      baseurl: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version_split[0] }}.{{ k8s_version_split[1] }}/rpm/
       enabled: true
       gpgcheck: true
-      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg 
+      gpgkey: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version_split[0] }}.{{ k8s_version_split[1] }}/rpm/repodata/repomd.xml.key
       exclude: kubelet kubeadm kubectl
 
   - name: Install Kubectl
