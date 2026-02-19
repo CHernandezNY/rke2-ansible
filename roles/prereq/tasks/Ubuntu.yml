@@ -1,6 +1,6 @@
 ---
 - name: Disable swap
-  become: yes
+  become: true
   shell: |
     sudo swapoff -a
     sudo rm -f /swap.img
@@ -15,28 +15,34 @@
       - gnupg-agent
     update_cache: yes
     state: present
-  register: apt_result
-  until: apt_result is success
-  retries: 10
-  delay: 15
 
 - name: Install NFS helper
   apt:
     name: nfs-common
     state: present
-  register: apt_result
-  until: apt_result is success
-  retries: 10
-  delay: 15
+
+- name: Install iptables
+  apt:
+    name: iptables
+    state: present
 
 - name: Install Python3 Pip
   apt:
     name: python3-pip
     state: present
-  register: apt_result
-  until: apt_result is success
-  retries: 10
-  delay: 15
+
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Check and Set the Python3 version
+  ansible.builtin.set_fact:
+    python3Version: "{{ ansible_facts.packages['python3'] | map(attribute='version') | first | split('.') }}"
+
+- name: Fix externally managed error for Python3 PIP
+  ansible.builtin.file:
+    path: "/usr/lib/python3.{{ python3Version[1] }}/EXTERNALLY-MANAGED"
+    state: absent
 
 - name: Install kubernetes python package
   pip:
@@ -44,15 +50,6 @@
       - kubernetes
       - pyyaml
       - openshift
-
-- name: Install iptables
-  apt:
-    name: iptables
-    state: present
-  register: apt_result
-  until: apt_result is success
-  retries: 10
-  delay: 15
 
 - name: Flush iptables before changing to iptables-legacy
   iptables:
@@ -69,14 +66,42 @@
     name: ip6tables
     path: /usr/sbin/ip6tables-legacy
 
-- name: Set the current MAC address for the default enthernet port.
-  set_fact:
-    node_mac_address: "{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress }}"
+- name: Add the br_netfilter module
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
 
-- name: Set variables based on eth0 MAC address.
+- name: Set net.bridge.bridge-nf-call-iptables on (1/2)
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+    dest: /etc/sysctl.d/k8s.conf
+  register: netbridge
+
+- name: Set net.bridge.bridge-nf-call-iptables on (2/2)
+  command: sysctl --system
+  when: netbridge.changed
+
+- name: Set ip forwarding on in /proc and in the sysctl file and reload if necessary
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Display the current IP address for the default enthernet port.
+  debug:
+    msg: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+
+- name: Get the current IP address for the default enthernet port.
   set_fact:
-    node_hostname: "{{ mac_address_mapping[node_mac_address].name }}"
-    node_ip_address: "{{ mac_address_mapping[node_mac_address].ip }}"
+    node_ip_address: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+
+- name: Set variables based on eth0 IP address.
+  set_fact:
+    node_hostname: "{{ ip_address_mapping[node_ip_address].name }}"
 
 - name: Set up networking-related files.
   template:
