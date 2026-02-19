@@ -9,4 +9,4 @@ server_init_args: >-
   {% endif %} 
   --token {{ rke2_token }} 
   {% endif %} 
-  {{ extra_server_args | default('') }}
+  {{ rke2_server_args | default('') }}
