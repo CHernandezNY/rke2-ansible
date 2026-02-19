@@ -32,9 +32,7 @@
   become: false
   roles:
     - role: rke2/cni
-      when: 
-        - ( cni_native == "none" and 
-            cni_plugin != "none")      
+      when: cni_native == "none" and cni_plugin != "none"      
 
 - hosts: worker
   become: true
